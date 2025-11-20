@@ -81,7 +81,7 @@ namespace AutomatizacionPOM.Pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"⚠️ Select2Choose fallo en {containerXpath} con '{textToSearch}': {ex.Message}");
+                Console.WriteLine($" Select2Choose fallo en {containerXpath} con '{textToSearch}': {ex.Message}");
             }
         }
 
@@ -91,14 +91,14 @@ namespace AutomatizacionPOM.Pages
             var boton = wait.Until(ExpectedConditions.ElementToBeClickable(BotonNuevoProveedor));
             ScrollIntoView(boton);
             boton.Click();
-            Console.WriteLine("➕ Se hizo clic en 'Nuevo Proveedor'.");
+            Console.WriteLine(" Se hizo clic en 'Nuevo Proveedor'.");
             Thread.Sleep(1500);
         }
 
         public void ValidarFormularioProveedorVisible()
         {
             wait.Until(ExpectedConditions.ElementIsVisible(FormularioProveedor));
-            Console.WriteLine("✅ Formulario de proveedor visible correctamente.");
+            Console.WriteLine("Formulario de proveedor visible correctamente.");
         }
 
         // ====== COMPLETAR FORMULARIO ======
@@ -106,24 +106,23 @@ namespace AutomatizacionPOM.Pages
                                         string nacionalidad, string fechaNac, string sexo, string estadoCivil,
                                         string email, string telefono, string pais, string ubigeo, string direccion)
         {
-            Console.WriteLine("🧾 Rellenando formulario de proveedor...");
+            Console.WriteLine("Rellenando formulario de proveedor...");
 
             try
             {
                 Select2Choose(XTipoDocumento, tipoDoc);
-                Console.WriteLine($"📑 Tipo de documento seleccionado: {tipoDoc}");
+                Console.WriteLine($"Tipo de documento seleccionado: {tipoDoc}");
 
                 var doc = wait.Until(ExpectedConditions.ElementIsVisible(NroDocumentoField));
                 ScrollIntoView(doc);
                 doc.Clear();
                 doc.SendKeys(nroDoc);
                 doc.SendKeys(Keys.Enter);
-                Console.WriteLine($"🧾 DNI ingresado y ENTER presionado: {nroDoc}");
-
+                Console.WriteLine($"DNI ingresado y ENTER presionado: {nroDoc}");
                 // Esperar validación y habilitación
                 try
                 {
-                    Console.WriteLine("⏳ Esperando validación del backend...");
+                    Console.WriteLine(" Esperando validación del backend...");
                     wait.Until(driver =>
                     {
                         try
@@ -133,11 +132,11 @@ namespace AutomatizacionPOM.Pages
                         }
                         catch { return false; }
                     });
-                    Console.WriteLine("🟢 Campos habilitados correctamente tras validación del documento.");
+                    Console.WriteLine(" Campos habilitados correctamente tras validación del documento.");
                 }
                 catch (WebDriverTimeoutException)
                 {
-                    Console.WriteLine("⚠️ Timeout esperando habilitación (backend no respondió).");
+                    Console.WriteLine(" Timeout esperando habilitación (backend no respondió).");
                 }
 
                 // Verificar autocompletado
@@ -149,34 +148,34 @@ namespace AutomatizacionPOM.Pages
                     string.IsNullOrWhiteSpace(apMatActual) &&
                     string.IsNullOrWhiteSpace(nomActual))
                 {
-                    Console.WriteLine("⚠️ Backend no autocompletó, completando manualmente...");
+                    Console.WriteLine(" Backend no autocompletó, completando manualmente...");
                     SetValueJS(driver.FindElement(ApellidoPaterno), apePat);
                     SetValueJS(driver.FindElement(ApellidoMaterno), apeMat);
                     SetValueJS(driver.FindElement(Nombres), nombres);
-                    Console.WriteLine($"👤 Datos manuales: {apePat} {apeMat} {nombres}");
+                    Console.WriteLine($" Datos manuales: {apePat} {apeMat} {nombres}");
                 }
                 else
                 {
-                    Console.WriteLine($"✅ Sistema autocompletó: {apPatActual} {apMatActual} {nomActual}");
+                    Console.WriteLine($" Sistema autocompletó: {apPatActual} {apMatActual} {nomActual}");
                 }
 
                 Select2Choose(XNacionalidad, nacionalidad);
-                Console.WriteLine($"🌎 Nacionalidad: {nacionalidad}");
+                Console.WriteLine($" Nacionalidad: {nacionalidad}");
 
                 var fn = driver.FindElement(FechaNacimiento);
                 ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].removeAttribute('readonly');", fn);
                 fn.Clear();
                 fn.SendKeys(fechaNac);
                 fn.SendKeys(Keys.Tab);
-                Console.WriteLine($"📅 Fecha nacimiento: {fechaNac}");
+                Console.WriteLine($" Fecha nacimiento: {fechaNac}");
 
                 new SelectElement(driver.FindElement(Sexo)).SelectByText(sexo);
                 Console.WriteLine($"⚧ Sexo: {sexo}");
 
                 Select2Choose(XEstadoCivil, estadoCivil);
-                Console.WriteLine($"❤️ Estado civil: {estadoCivil}");
+                Console.WriteLine($" Estado civil: {estadoCivil}");
 
-                // ====== 💡 CAMBIO CLAVE AQUÍ ======
+                // ====== CAMBIO CLAVE AQUÍ ======
                 var em = wait.Until(ExpectedConditions.ElementIsVisible(Email));
                 ScrollIntoView(em);
 
@@ -197,33 +196,33 @@ namespace AutomatizacionPOM.Pages
                 ", em, email);
 
                 em.SendKeys(Keys.Tab);
-                Console.WriteLine($"📧 Email ingresado correctamente: {email}");
-                // ====== 💡 FIN CAMBIO ======
+                Console.WriteLine($" Email ingresado correctamente: {email}");
+                // ======  FIN CAMBIO ======
 
                 var tel = driver.FindElement(Telefono);
                 ScrollIntoView(tel);
                 SetValueJS(tel, telefono);
                 tel.SendKeys(Keys.Tab);
-                Console.WriteLine($"☎️ Teléfono: {telefono}");
+                Console.WriteLine($"Teléfono: {telefono}");
 
                 Select2Choose(XPais, pais);
-                Console.WriteLine($"🗺️ País: {pais}");
+                Console.WriteLine($"País: {pais}");
 
                 Select2Choose(XUbigeo, ubigeo);
-                Console.WriteLine($"📌 Ubigeo: {ubigeo}");
+                Console.WriteLine($" Ubigeo: {ubigeo}");
 
                 var dir = driver.FindElement(Detalles);
                 ScrollIntoView(dir);
                 SetValueJS(dir, direccion);
                 dir.SendKeys(Keys.Tab);
-                Console.WriteLine($"📍 Dirección: {direccion}");
+                Console.WriteLine($" Dirección: {direccion}");
 
-                Console.WriteLine("✅ Formulario completado correctamente.");
+                Console.WriteLine("Formulario completado correctamente.");
                 Thread.Sleep(1000);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error al llenar formulario: {ex.Message}");
+                Console.WriteLine($"Error al llenar formulario: {ex.Message}");
             }
         }
 
@@ -232,20 +231,20 @@ namespace AutomatizacionPOM.Pages
         {
             try
             {
-                Console.WriteLine("💾 Intentando hacer clic en 'Guardar'...");
+                Console.WriteLine(" Intentando hacer clic en 'Guardar'...");
                 wait.Until(driver =>
                 {
                     var overlays = driver.FindElements(By.CssSelector(".block-ui-overlay"));
                     return overlays.Count == 0 || !overlays[0].Displayed;
                 });
-                Console.WriteLine("🟢 Overlay eliminado.");
+                Console.WriteLine(" Overlay eliminado.");
 
                 var boton = wait.Until(ExpectedConditions.ElementIsVisible(GuardarButton));
 
                 for (int i = 0; i < 10; i++)
                 {
                     if (boton.GetAttribute("disabled") == null) break;
-                    Console.WriteLine("⏳ Esperando que 'Guardar' se habilite...");
+                    Console.WriteLine(" Esperando que 'Guardar' se habilite...");
                     Thread.Sleep(500);
                 }
 
@@ -253,19 +252,19 @@ namespace AutomatizacionPOM.Pages
                 try
                 {
                     boton.Click();
-                    Console.WriteLine("✅ Clic normal en 'Guardar'.");
+                    Console.WriteLine(" Clic normal en 'Guardar'.");
                 }
                 catch (ElementClickInterceptedException)
                 {
                     ClickJS(boton);
-                    Console.WriteLine("⚡ Clic forzado en 'Guardar'.");
+                    Console.WriteLine(" Clic forzado en 'Guardar'.");
                 }
 
                 Thread.Sleep(1500);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error al hacer clic en 'Guardar': {ex.Message}");
+                Console.WriteLine($" Error al hacer clic en 'Guardar': {ex.Message}");
             }
         }
 
@@ -273,23 +272,23 @@ namespace AutomatizacionPOM.Pages
         public void ValidarMensajesObligatorios()
         {
             if (driver.FindElements(MensajeError).Count > 0)
-                Console.WriteLine("⚠️ Mensajes de campos obligatorios mostrados correctamente.");
+                Console.WriteLine(" Mensajes de campos obligatorios mostrados correctamente.");
             else
-                Console.WriteLine("❌ No se mostraron los mensajes esperados.");
+                Console.WriteLine("No se mostraron los mensajes esperados.");
         }
 
         public void ValidarErroresFormato()
         {
             if (driver.FindElements(MensajeError).Count > 0)
-                Console.WriteLine("⚠️ Mensajes de formato inválido detectados correctamente.");
+                Console.WriteLine(" Mensajes de formato inválido detectados correctamente.");
             else
-                Console.WriteLine("❌ No se detectaron errores de formato.");
+                Console.WriteLine("No se detectaron errores de formato.");
         }
 
-        // ====== ✅ MÉTODO CORREGIDO COMPLETAMENTE ======
+        // ======  MÉTODO CORREGIDO COMPLETAMENTE ======
         public void ValidarRegistroExitoso()
         {
-            Console.WriteLine("⏳ Esperando mensaje de confirmación de registro exitoso...");
+            Console.WriteLine(" Esperando mensaje de confirmación de registro exitoso...");
 
             try
             {
@@ -316,20 +315,20 @@ namespace AutomatizacionPOM.Pages
 
                 if (mensaje != null)
                 {
-                    Console.WriteLine("✅ Proveedor registrado exitosamente (mensaje detectado en la interfaz).");
+                    Console.WriteLine("Proveedor registrado exitosamente (mensaje detectado en la interfaz).");
                 }
                 else
                 {
-                    throw new WebDriverTimeoutException("⚠️ No se detectó mensaje de éxito visible.");
+                    throw new WebDriverTimeoutException(" No se detectó mensaje de éxito visible.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ No se detectó mensaje de éxito o tardó demasiado: {ex.Message}");
+                Console.WriteLine($"No se detectó mensaje de éxito o tardó demasiado: {ex.Message}");
                 if (driver.FindElements(MensajeError).Count > 0)
-                    Console.WriteLine("⚠️ Se encontraron mensajes de error en la interfaz.");
+                    Console.WriteLine(" Se encontraron mensajes de error en la interfaz.");
                 else
-                    Console.WriteLine("⚠️ Registro posiblemente exitoso pero sin mensaje visible (verificar backend).");
+                    Console.WriteLine(" Registro posiblemente exitoso pero sin mensaje visible (verificar backend).");
             }
         }
 
@@ -341,15 +340,15 @@ namespace AutomatizacionPOM.Pages
             campo.Clear();
             SetValueJS(campo, telefono);
             campo.SendKeys(Keys.Tab);
-            Console.WriteLine($"☎️ Se ingresó teléfono con formato especial: {telefono}");
+            Console.WriteLine($" Se ingresó teléfono con formato especial: {telefono}");
         }
 
         public void ValidarTelefonoPermisible()
         {
             if (driver.FindElements(MensajeError).Count == 0)
-                Console.WriteLine("✅ Sistema permitió formato especial de teléfono sin error.");
+                Console.WriteLine(" Sistema permitió formato especial de teléfono sin error.");
             else
-                Console.WriteLine("⚠️ Sistema mostró advertencia informativa, sin bloqueo.");
+                Console.WriteLine(" Sistema mostró advertencia informativa, sin bloqueo.");
         }
 
         // ====== VALIDACIÓN DE ENTER Y AUTOCOMPLETADO ======
@@ -367,9 +366,9 @@ namespace AutomatizacionPOM.Pages
                     arguments[0].dispatchEvent(e);
                 ", campo);
 
-                Console.WriteLine($"📄 DNI ingresado y ENTER disparado: {nroDoc}");
+                Console.WriteLine($" DNI ingresado y ENTER disparado: {nroDoc}");
 
-                Console.WriteLine("⏳ Esperando autocompletado de nombres...");
+                Console.WriteLine(" Esperando autocompletado de nombres...");
                 bool completado = wait.Until(driver =>
                 {
                     try
@@ -387,16 +386,16 @@ namespace AutomatizacionPOM.Pages
                     string apPat = driver.FindElement(ApellidoPaterno).GetAttribute("value");
                     string apMat = driver.FindElement(ApellidoMaterno).GetAttribute("value");
                     string nom = driver.FindElement(Nombres).GetAttribute("value");
-                    Console.WriteLine($"✅ Autocompletado correcto: {apPat} {apMat} {nom}");
+                    Console.WriteLine($" Autocompletado correcto: {apPat} {apMat} {nom}");
                 }
                 else
                 {
-                    Console.WriteLine("⚠️ No se detectó autocompletado (posible fallo de backend o documento no válido).");
+                    Console.WriteLine(" No se detectó autocompletado (posible fallo de backend o documento no válido).");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error al validar DNI y presionar ENTER: {ex.Message}");
+                Console.WriteLine($" Error al validar DNI y presionar ENTER: {ex.Message}");
             }
         }
 
@@ -404,9 +403,9 @@ namespace AutomatizacionPOM.Pages
         {
             var camposActivos = driver.FindElements(CamposHabilitados);
             if (camposActivos.Count > 5)
-                Console.WriteLine("✅ Los campos permanecen habilitados para edición tras presionar ENTER.");
+                Console.WriteLine(" Los campos permanecen habilitados para edición tras presionar ENTER.");
             else
-                Console.WriteLine("❌ Algunos campos fueron bloqueados indebidamente.");
+                Console.WriteLine(" Algunos campos fueron bloqueados indebidamente.");
         }
     }
 }
